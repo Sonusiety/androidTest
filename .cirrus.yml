@@ -1,17 +1,17 @@
 check_android_task:
   name: Run Android tests
-  env: 
-     API_LEVEL: 30
-     TARGET: google_apis
-     ARCH: x86
-     CC_TEST_REPORTER_ID: ENCRYPTED[2846ea819633c12f2edafa9628cad2661cd44cffa4a44369cff8b189433f379a8f5e1a666532c780c608e3a77e0cb3ec]
+  env:
+    API_LEVEL: 30
+    TARGET: google_apis
+    ARCH: x86
+    CC_TEST_REPORTER_ID: ENCRYPTED[2846ea819633c12f2edafa9628cad2661cd44cffa4a44369cff8b189433f379a8f5e1a666532c780c608e3a77e0cb3ec]
   container:
     image: reactivecircus/android-emulator-$API_LEVEL:latest
     kvm: true
     cpu: 8
     memory: 10G
   create_device_script:
-    echo no | avdmanager create avd --force --name test --abi "$TARGET/$ARCH" --package "system-images;android-$API_LEVEL;
+    echo no | avdmanager create avd --force --name test --abi "$TARGET/$ARCH" --package "system-images;android-$API_LEVEL;$TARGET;$ARCH"
   start_emulator_background_script:
     $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim -camera-back none
   build_script: |
@@ -21,8 +21,8 @@ check_android_task:
     adb wait-for-device
     adb shell input keyevent 82
   disable_animations_script: |
-    adb shell setting put global window_animation_scale 0.0
-    adb shell setting put global transition_animation_scale 0.0
+    adb shell settings put global window_animation_scale 0.0
+    adb shell settings put global transition_animation_scale 0.0
     adb shell settings put global animator_duration_scale 0.0
   prepare_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
